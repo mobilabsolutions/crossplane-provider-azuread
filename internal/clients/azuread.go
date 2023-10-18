@@ -33,7 +33,6 @@ const (
 	errGetProviderConfig     = "cannot get referenced ProviderConfig"
 	errTrackUsage            = "cannot track ProviderConfig usage"
 	errExtractCredentials    = "cannot extract credentials"
-	errSubscriptionIDNotSet  = "subscription ID must be set in ProviderConfig when credential source is InjectedIdentity, OIDCTokenFile or Upbound"
 	errTenantIDNotSet        = "tenant ID must be set in ProviderConfig when credential source is InjectedIdentity, OIDCTokenFile or Upbound"
 	errUnmarshalCredentials  = "cannot unmarshal azuread credentials as JSON"
 	keyClientID              = "clientId"
@@ -81,13 +80,9 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string, sche
 }
 
 func msiAuth(pc *v1beta1.ProviderConfig, ps *terraform.Setup) error {
-	if pc.Spec.SubscriptionID == nil || len(*pc.Spec.SubscriptionID) == 0 {
-		return errors.New(errSubscriptionIDNotSet)
-	}
 	if pc.Spec.TenantID == nil || len(*pc.Spec.TenantID) == 0 {
 		return errors.New(errTenantIDNotSet)
 	}
-	ps.Configuration[keySubscriptionID] = *pc.Spec.SubscriptionID
 	ps.Configuration[keyTenantID] = *pc.Spec.TenantID
 	ps.Configuration[keyUseMSI] = "true"
 	if pc.Spec.MSIEndpoint != nil {
