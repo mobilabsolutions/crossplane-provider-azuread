@@ -16,7 +16,6 @@ package clients
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 	"github.com/pkg/errors"
@@ -34,8 +33,14 @@ const (
 	errGetProviderConfig     = "cannot get referenced ProviderConfig"
 	errTrackUsage            = "cannot track ProviderConfig usage"
 	errExtractCredentials    = "cannot extract credentials"
+	errSubscriptionIDNotSet  = "subscription ID must be set in ProviderConfig when credential source is InjectedIdentity, OIDCTokenFile or Upbound"
+	errTenantIDNotSet        = "tenant ID must be set in ProviderConfig when credential source is InjectedIdentity, OIDCTokenFile or Upbound"
 	errUnmarshalCredentials  = "cannot unmarshal azuread credentials as JSON"
 	keyClientID              = "clientId"
+	keySubscriptionID        = "subscription_id"
+	keyUseMSI                = "use_msi"
+	keyMSIEndpoint           = "msi_endpoint"
+	keyEnvironment           = "environment"
 	keyClientSecret          = "clientSecret"
 	keyTenantID              = "tenantId"
 	keyTerraformClientID     = "client_id"

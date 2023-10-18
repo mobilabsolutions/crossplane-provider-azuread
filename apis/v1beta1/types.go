@@ -22,6 +22,12 @@ type ProviderConfigSpec struct {
 	// +optional
 	ClientID *string `json:"clientID,omitempty"`
 
+	// SubscriptionID is the Azure subscription ID to be used.
+	// If unset, subscription ID from Credentials will be used.
+	// Required if Credentials.Source is InjectedIdentity.
+	// +kubebuilder:validation:Optional
+	SubscriptionID *string `json:"subscriptionID,omitempty"`
+
 	// TenantID is the Azure AD tenant ID to be used.
 	// If unset, tenant ID from Credentials will be used.
 	// Required if Credentials.Source is InjectedIdentity.
