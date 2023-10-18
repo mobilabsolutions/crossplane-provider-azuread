@@ -70,25 +70,29 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string, sche
 			return ps, errors.Wrap(err, errTrackUsage)
 		}
 
-		data, err := resource.CommonCredentialExtractor(ctx, pc.Spec.Credentials.Source, client, pc.Spec.Credentials.CommonCredentialSelectors)
-		if err != nil {
-			return ps, errors.Wrap(err, errExtractCredentials)
-		}
-		creds := map[string]string{}
-		if err := json.Unmarshal(data, &creds); err != nil {
-			return ps, errors.Wrap(err, errUnmarshalCredentials)
-		}
-		// set provider configuration
-		ps.Configuration = map[string]any{}
-		if v, ok := creds[keyClientID]; ok {
-			ps.Configuration[keyTerraformClientID] = v
-		}
-		if v, ok := creds[keyClientSecret]; ok {
-			ps.Configuration[keyTerraformClientSecret] = v
-		}
-		if v, ok := creds[keyTenantID]; ok {
-			ps.Configuration[keyTerraformTenantID] = v
-		}
-		return ps, nil
+		var err = msiAuth(pc, &ps)
+		return ps, err
 	}
+}
+
+func msiAuth(pc *v1beta1.ProviderConfig, ps *terraform.Setup) error {
+	if pc.Spec.SubscriptionID == nil || len(*pc.Spec.SubscriptionID) == 0 {
+		return errors.New(errSubscriptionIDNotSet)
+	}
+	if pc.Spec.TenantID == nil || len(*pc.Spec.TenantID) == 0 {
+		return errors.New(errTenantIDNotSet)
+	}
+	ps.Configuration[keySubscriptionID] = *pc.Spec.SubscriptionID
+	ps.Configuration[keyTenantID] = *pc.Spec.TenantID
+	ps.Configuration[keyUseMSI] = "true"
+	if pc.Spec.MSIEndpoint != nil {
+		ps.Configuration[keyMSIEndpoint] = *pc.Spec.MSIEndpoint
+	}
+	if pc.Spec.ClientID != nil {
+		ps.Configuration[keyClientID] = *pc.Spec.ClientID
+	}
+	if pc.Spec.Environment != nil {
+		ps.Configuration[keyEnvironment] = *pc.Spec.Environment
+	}
+	return nil
 }
