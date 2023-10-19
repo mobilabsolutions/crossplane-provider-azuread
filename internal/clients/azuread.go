@@ -74,6 +74,17 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string, sche
 			return ps, errors.Wrap(err, errTrackUsage)
 		}
 
+		ps.Configuration = map[string]interface{}{
+			keyTerraformFeatures: struct{}{},
+			// Terraform AzureRM provider tries to register all resource providers
+			// in Azure just in case if the provider of the resource you're
+			// trying to create is not registered and the returned error is
+			// ambiguous. However, this requires service principal to have provider
+			// registration permissions which are irrelevant in most contexts.
+			// For details, see https://github.com/upbound/provider-azure/issues/104
+			keySkipProviderRegistration: true,
+		}
+		
 		var err = msiAuth(pc, &ps)
 		return ps, err
 	}
