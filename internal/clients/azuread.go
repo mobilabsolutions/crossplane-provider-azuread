@@ -29,22 +29,24 @@ import (
 
 const (
 	// error messages
-	errNoProviderConfig      = "no providerConfigRef provided"
-	errGetProviderConfig     = "cannot get referenced ProviderConfig"
-	errTrackUsage            = "cannot track ProviderConfig usage"
-	errExtractCredentials    = "cannot extract credentials"
-	errTenantIDNotSet        = "tenant ID must be set in ProviderConfig when credential source is InjectedIdentity, OIDCTokenFile or Upbound"
-	errUnmarshalCredentials  = "cannot unmarshal azuread credentials as JSON"
-	keyClientID              = "clientId"
-	keySubscriptionID        = "subscription_id"
-	keyUseMSI                = "use_msi"
-	keyMSIEndpoint           = "msi_endpoint"
-	keyEnvironment           = "environment"
-	keyClientSecret          = "clientSecret"
-	keyTenantID              = "tenantId"
-	keyTerraformClientID     = "client_id"
-	keyTerraformClientSecret = "client_secret"
-	keyTerraformTenantID     = "tenant_id"
+	errNoProviderConfig         = "no providerConfigRef provided"
+	errGetProviderConfig        = "cannot get referenced ProviderConfig"
+	errTrackUsage               = "cannot track ProviderConfig usage"
+	errExtractCredentials       = "cannot extract credentials"
+	errTenantIDNotSet           = "tenant ID must be set in ProviderConfig when credential source is InjectedIdentity, OIDCTokenFile or Upbound"
+	errUnmarshalCredentials     = "cannot unmarshal azuread credentials as JSON"
+	keyClientID                 = "clientId"
+	keySubscriptionID           = "subscription_id"
+	keyUseMSI                   = "use_msi"
+	keyMSIEndpoint              = "msi_endpoint"
+	keyEnvironment              = "environment"
+	keyClientSecret             = "clientSecret"
+	keyTenantID                 = "tenantId"
+	keyTerraformClientID        = "client_id"
+	keyTerraformClientSecret    = "client_secret"
+	keyTerraformTenantID        = "tenant_id"
+	keyTerraformFeatures        = "features"
+	keySkipProviderRegistration = "skip_provider_registration"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
@@ -84,7 +86,7 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string, sche
 			// For details, see https://github.com/upbound/provider-azure/issues/104
 			keySkipProviderRegistration: true,
 		}
-		
+
 		var err = msiAuth(pc, &ps)
 		return ps, err
 	}
