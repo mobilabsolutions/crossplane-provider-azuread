@@ -35,13 +35,10 @@ const (
 	errExtractCredentials       = "cannot extract credentials"
 	errTenantIDNotSet           = "tenant ID must be set in ProviderConfig when credential source is InjectedIdentity, OIDCTokenFile or Upbound"
 	errUnmarshalCredentials     = "cannot unmarshal azuread credentials as JSON"
-	keyClientID                 = "clientID"
 	keySubscriptionID           = "subscription_id"
 	keyUseMSI                   = "use_msi"
 	keyMSIEndpoint              = "msi_endpoint"
 	keyEnvironment              = "environment"
-	keyClientSecret             = "clientSecret"
-	keyTenantID                 = "tenantID"
 	keyTerraformClientID        = "client_id"
 	keyTerraformClientSecret    = "client_secret"
 	keyTerraformTenantID        = "tenant_id"
@@ -96,13 +93,13 @@ func msiAuth(pc *v1beta1.ProviderConfig, ps *terraform.Setup) error {
 	if pc.Spec.TenantID == nil || len(*pc.Spec.TenantID) == 0 {
 		return errors.New(errTenantIDNotSet)
 	}
-	ps.Configuration[keyTenantID] = *pc.Spec.TenantID
+	ps.Configuration[keyTerraformTenantID] = *pc.Spec.TenantID
 	ps.Configuration[keyUseMSI] = "true"
 	if pc.Spec.MSIEndpoint != nil {
 		ps.Configuration[keyMSIEndpoint] = *pc.Spec.MSIEndpoint
 	}
 	if pc.Spec.ClientID != nil {
-		ps.Configuration[keyClientID] = *pc.Spec.ClientID
+		ps.Configuration[keyTerraformClientID] = *pc.Spec.ClientID
 	}
 	if pc.Spec.Environment != nil {
 		ps.Configuration[keyEnvironment] = *pc.Spec.Environment
